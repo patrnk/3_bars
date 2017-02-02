@@ -6,12 +6,21 @@ def load_data(filepath):
         bars = json.load(f);
         return bars
 
+
 def get_biggest_bar(data):
-    pass
+    biggest_bar = data[0]
+    for bar in data:
+        if bar['SeatsCount'] > biggest_bar['SeatsCount']:
+            biggest_bar = bar
+    return biggest_bar
 
 
 def get_smallest_bar(data):
-    pass
+    smallest_bar = data[0]
+    for bar in data:
+        if bar['SeatsCount'] < smallest_bar['SeatsCount']:
+            smallest_bar = bar
+    return smallest_bar
 
 
 def get_closest_bar(data, longitude, latitude):
@@ -19,4 +28,4 @@ def get_closest_bar(data, longitude, latitude):
 
 
 if __name__ == '__main__':
-    load_data('data.json')
+    print(get_smallest_bar(load_data('data.json'))['Name'])
