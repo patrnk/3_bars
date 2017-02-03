@@ -25,18 +25,18 @@ def load_data(filepath):
         return bars
 
 
-def get_biggest_bar(data):
-    biggest_bar = data[0]
-    for bar in data:
-        if bar['SeatsCount'] > biggest_bar['SeatsCount']:
+def get_biggest_bar(bars):
+    biggest_bar = bars[0]
+    for bar in bars:
+        if bar.seat_count > biggest_bar.seat_count:
             biggest_bar = bar
     return biggest_bar
 
 
-def get_smallest_bar(data):
-    smallest_bar = data[0]
-    for bar in data:
-        if bar['SeatsCount'] < smallest_bar['SeatsCount']:
+def get_smallest_bar(bars):
+    smallest_bar = bars[0]
+    for bar in bars:
+        if bar.seat_count < smallest_bar.seat_count:
             smallest_bar = bar
     return smallest_bar
 
@@ -47,8 +47,8 @@ def distance_to(bar, longitude, latitude):
     return sqrt((lon - longitude) ** 2 + (lat - latitude) ** 2)
 
 
-def get_closest_bar(data, longitude, latitude):
-    closest_bar = data[0]
+def get_closest_bar(bars, longitude, latitude):
+    closest_bar = bars[0]
     closest_distance = distance_to(data[0], longitude, latitude)
     for bar in data:
         current_distance = distance_to(bar, longitude, latitude) 
@@ -63,6 +63,4 @@ if __name__ == '__main__':
     #b = get_closest_bar(load_data('data.json'), longitude, latitude)
     #print(b['Name'], b['Longitude_WGS84'], b['Latitude_WGS84'])
     
-    for bar in load_data('data.json'):
-        print(bar.name)
-    #print(get_biggest_bar(load_data('data.json')))
+    print(get_smallest_bar(load_data('data.json')).name)
