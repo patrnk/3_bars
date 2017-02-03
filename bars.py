@@ -7,7 +7,8 @@ class Bar:
     def __init__(self, json_data):
         self.seat_count = json_data['SeatsCount']
         self.longitude = float(json_data['Longitude_WGS84'])
-        self.latitude = float(['Latitude_WGS84'])
+        self.latitude = float(json_data['Latitude_WGS84'])
+        self.name = json_data['Name']
 
     def distance_to(self, another_bar):
         x2 = (another_bar.longitude - self.longitude) ** 2
@@ -17,7 +18,10 @@ class Bar:
 
 def load_data(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
-        bars = json.load(f);
+        raw_bars = json.load(f);
+        bars = []
+        for raw_bar in raw_bars:
+            bars.append(Bar(raw_bar))
         return bars
 
 
@@ -55,6 +59,10 @@ def get_closest_bar(data, longitude, latitude):
 
 
 if __name__ == '__main__':
-    longitude, latitude = [float(s) for s in input().split()]
-    b = get_closest_bar(load_data('data.json'), longitude, latitude)
-    print(b['Name'], b['Longitude_WGS84'], b['Latitude_WGS84'])
+    #longitude, latitude = [float(s) for s in input().split()]
+    #b = get_closest_bar(load_data('data.json'), longitude, latitude)
+    #print(b['Name'], b['Longitude_WGS84'], b['Latitude_WGS84'])
+    
+    for bar in load_data('data.json'):
+        print(bar.name)
+    #print(get_biggest_bar(load_data('data.json')))
