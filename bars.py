@@ -2,6 +2,19 @@ import json
 from math import sqrt
 
 
+class Bar:
+
+    def __init__(self, json_data):
+        self.seat_count = json_data['SeatsCount']
+        self.longitude = float(json_data['Longitude_WGS84'])
+        self.latitude = float(['Latitude_WGS84'])
+
+    def distance_to(self, another_bar):
+        x2 = (another_bar.longitude - self.longitude) ** 2
+        y2 = (another_bar.latitude - self.latitude) ** 2
+        return sqrt(x2 + y2)
+
+
 def load_data(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         bars = json.load(f);
