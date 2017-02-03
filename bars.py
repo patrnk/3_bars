@@ -1,3 +1,4 @@
+import sys
 import json
 from math import sqrt
 
@@ -10,9 +11,9 @@ class Bar:
         self.latitude = float(json_data['Latitude_WGS84'])
         self.name = json_data['Name']
 
-    def distance_to(self, another_bar):
-        x2 = (another_bar.longitude - self.longitude) ** 2
-        y2 = (another_bar.latitude - self.latitude) ** 2
+    def distance_to(self, longitude, latitude):
+        x2 = (longitude - self.longitude) ** 2
+        y2 = (latitude - self.latitude) ** 2
         return sqrt(x2 + y2)
 
 
@@ -41,26 +42,47 @@ def get_smallest_bar(bars):
     return smallest_bar
 
 
-def distance_to(bar, longitude, latitude):
-    lon = float(bar['Longitude_WGS84'])
-    lat = float(bar['Latitude_WGS84'])
-    return sqrt((lon - longitude) ** 2 + (lat - latitude) ** 2)
-
-
 def get_closest_bar(bars, longitude, latitude):
     closest_bar = bars[0]
-    closest_distance = distance_to(data[0], longitude, latitude)
-    for bar in data:
-        current_distance = distance_to(bar, longitude, latitude) 
+    closest_distance = closest_bar.distance_to(longitude, latitude)
+    for bar in bars:
+        current_distance = bar.distance_to(longitude, latitude) 
         if current_distance < closest_distance:
             closest_bar = bar
             closest_distance = current_distance
     return closest_bar
 
 
+def print_usage():
+    print('TODO: write usage statement', file=sys.stderr)
+
+
+def print_biggest_bar(data_file):
+    print(get_biggest_bar(load_data(data_file)).name)
+
+
+def print_smallest_bar(data_file):
+    print(get_smallest_bar(load_data(data_file)).name)
+
+
+def print_closest_bar(data_file):
+    longitude, latitude = [float(s) for s in input().split()]
+    bar = get_closest_bar(load_data(data_file), longitude, latitude)
+    print(b.name, b.longitude, b.latitude)
+
+
+options = {'biggest': print_biggest_bar, 'smallest': print_smallest_bar,
+           'closest': print_closest_bar}
+
 if __name__ == '__main__':
-    #longitude, latitude = [float(s) for s in input().split()]
-    #b = get_closest_bar(load_data('data.json'), longitude, latitude)
-    #print(b['Name'], b['Longitude_WGS84'], b['Latitude_WGS84'])
-    
-    print(get_smallest_bar(load_data('data.json')).name)
+    if len(sys.argv) != 3:
+        print('The wrong number of arguments is supplied.', file=sys.stderr)
+        print_usage()
+    else:
+        for opt in options:
+            if opt == sys.argv[1]:
+                options[opt](sys.argv[2])
+                break;
+        else:
+            print('Unknown option.', file=sys.stderr)
+            print_usage()
