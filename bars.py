@@ -28,7 +28,7 @@ def load_data(filepath):
                 bars.append(Bar(raw_bar))
             return bars
     except FileNotFoundError:
-        raise SystemExit('File is not found.')
+        raise SystemExit('Файл не найден.')
 
 
 def get_biggest_bar(bars):
@@ -60,12 +60,12 @@ def get_closest_bar(bars, longitude, latitude):
 
 def print_usage(name):
     print('usage: ' + name + ' mode file_name', file=sys.stderr)
-    print('       mode is either:', file=sys.stderr)
-    print('       - biggest (outputs the biggest bar)', file=sys.stderr)
-    print('       - smallest (outputs the smallest bar)', file=sys.stderr)
-    print('       - closest (outputs the closest bar)', file=sys.stderr)
-    print('       file_name is the name of the .json file', file=sys.stderr)
-    print('         with data about the bars', file=sys.stderr)
+    print('     mode принимает следующие значения:', file=sys.stderr)
+    print('     - biggest (показать самый большой бар)', file=sys.stderr)
+    print('     - smallest (показать самый маленький бар)', file=sys.stderr)
+    print('     - closest (показать ближайший бар)', file=sys.stderr)
+    print('     file_name - это имя JSON файла', file=sys.stderr)
+    print('                 с данными о барах', file=sys.stderr)
 
 
 def print_bar(bar):
@@ -75,18 +75,18 @@ def print_bar(bar):
 
 
 def print_biggest_bar(data_file):
-    biggest_bar = get_biggest_bar(load_data(data_file)).name 
+    biggest_bar = get_biggest_bar(load_data(data_file))
     print_bar(biggest_bar)
 
 
 def print_smallest_bar(data_file):
-    smallest_bar = get_smallest_bar(load_data(data_file)).name
+    smallest_bar = get_smallest_bar(load_data(data_file))
     print_bar(smallest_bar)
 
 
 def print_closest_bar(data_file):
     bars = load_data(data_file)
-    message = 'Please enter your longitude and latitude: '
+    message = 'Введите долготу и ширину: '
     longitude, latitude = [float(s) for s in input(message).split()]
     bar = get_closest_bar(bars, longitude, latitude)
     print_bar(bar)
@@ -97,7 +97,7 @@ options = {'biggest': print_biggest_bar, 'smallest': print_smallest_bar,
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print('The wrong number of arguments is supplied.', file=sys.stderr)
+        print('Неверно количество введенных аргументов.', file=sys.stderr)
         print_usage(sys.argv[0])
     else:
         for opt in options:
@@ -105,5 +105,5 @@ if __name__ == '__main__':
                 options[opt](sys.argv[2])
                 break;
         else:
-            print('Unknown option.', file=sys.stderr)
+            print('Неизвестный аргумент.', file=sys.stderr)
             print_usage(sys.argv[0])
