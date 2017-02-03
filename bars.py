@@ -66,9 +66,10 @@ def print_smallest_bar(data_file):
 
 
 def print_closest_bar(data_file):
-    longitude, latitude = [float(s) for s in input().split()]
+    message = 'Please enter your longitude and latitude: '
+    longitude, latitude = [float(s) for s in input(message).split()]
     bar = get_closest_bar(load_data(data_file), longitude, latitude)
-    print(b.name, b.longitude, b.latitude)
+    print(bar.name, bar.longitude, bar.latitude)
 
 
 options = {'biggest': print_biggest_bar, 'smallest': print_smallest_bar,
