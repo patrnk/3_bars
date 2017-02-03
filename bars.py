@@ -7,9 +7,11 @@ class Bar:
 
     def __init__(self, json_data):
         self.seat_count = json_data['SeatsCount']
-        self.longitude = float(json_data['Longitude_WGS84'])
-        self.latitude = float(json_data['Latitude_WGS84'])
+        self.longitude = float(json_data['geoData']['coordinates'][0])
+        self.latitude = float(json_data['geoData']['coordinates'][1])
         self.name = json_data['Name']
+        self.address = json_data['District'] + ', ' + json_data['Address']
+        self.telephone = json_data['PublicPhone'][0]['PublicPhone']
 
     def distance_to(self, longitude, latitude):
         x2 = (longitude - self.longitude) ** 2
@@ -66,12 +68,20 @@ def print_usage(name):
     print('         with data about the bars', file=sys.stderr)
 
 
+def print_bar(bar):
+    print('Название: ' + bar.name)
+    print('Адрес: ' + bar.address)
+    print('Телефон: ' + bar.telephone)
+
+
 def print_biggest_bar(data_file):
-    print(get_biggest_bar(load_data(data_file)).name)
+    biggest_bar = get_biggest_bar(load_data(data_file)).name 
+    print_bar(biggest_bar)
 
 
 def print_smallest_bar(data_file):
-    print(get_smallest_bar(load_data(data_file)).name)
+    smallest_bar = get_smallest_bar(load_data(data_file)).name
+    print_bar(smallest_bar)
 
 
 def print_closest_bar(data_file):
@@ -79,7 +89,7 @@ def print_closest_bar(data_file):
     message = 'Please enter your longitude and latitude: '
     longitude, latitude = [float(s) for s in input(message).split()]
     bar = get_closest_bar(bars, longitude, latitude)
-    print(bar.name, bar.longitude, bar.latitude)
+    print_bar(bar)
 
 
 options = {'biggest': print_biggest_bar, 'smallest': print_smallest_bar,
