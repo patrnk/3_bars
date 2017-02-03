@@ -18,12 +18,15 @@ class Bar:
 
 
 def load_data(filepath):
-    with open(filepath, 'r', encoding='utf-8') as f:
-        raw_bars = json.load(f);
-        bars = []
-        for raw_bar in raw_bars:
-            bars.append(Bar(raw_bar))
-        return bars
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            raw_bars = json.load(f);
+            bars = []
+            for raw_bar in raw_bars:
+                bars.append(Bar(raw_bar))
+            return bars
+    except FileNotFoundError:
+        raise SystemExit('File is not found.')
 
 
 def get_biggest_bar(bars):
@@ -66,9 +69,10 @@ def print_smallest_bar(data_file):
 
 
 def print_closest_bar(data_file):
+    bars = load_data(data_file)
     message = 'Please enter your longitude and latitude: '
     longitude, latitude = [float(s) for s in input(message).split()]
-    bar = get_closest_bar(load_data(data_file), longitude, latitude)
+    bar = get_closest_bar(bars, longitude, latitude)
     print(bar.name, bar.longitude, bar.latitude)
 
 
