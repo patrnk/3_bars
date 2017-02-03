@@ -56,8 +56,14 @@ def get_closest_bar(bars, longitude, latitude):
     return closest_bar
 
 
-def print_usage():
-    print('TODO: write usage statement', file=sys.stderr)
+def print_usage(name):
+    print('usage: ' + name + ' mode file_name', file=sys.stderr)
+    print('       mode is either:', file=sys.stderr)
+    print('       - biggest (outputs the biggest bar)', file=sys.stderr)
+    print('       - smallest (outputs the smallest bar)', file=sys.stderr)
+    print('       - closest (outputs the closest bar)', file=sys.stderr)
+    print('       file_name is the name of the .json file', file=sys.stderr)
+    print('         with data about the bars', file=sys.stderr)
 
 
 def print_biggest_bar(data_file):
@@ -82,7 +88,7 @@ options = {'biggest': print_biggest_bar, 'smallest': print_smallest_bar,
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print('The wrong number of arguments is supplied.', file=sys.stderr)
-        print_usage()
+        print_usage(sys.argv[0])
     else:
         for opt in options:
             if opt == sys.argv[1]:
@@ -90,4 +96,4 @@ if __name__ == '__main__':
                 break;
         else:
             print('Unknown option.', file=sys.stderr)
-            print_usage()
+            print_usage(sys.argv[0])
