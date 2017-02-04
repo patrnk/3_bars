@@ -10,33 +10,34 @@ def distance_to(bar, longitude, latitude):
 
 
 def load_data(filepath):
-    try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        raise SystemExit('Файл не найден.')
+    with open(filepath, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 
-def get_biggest_bar(bars):
-    return max(bars, key=lambda bar: int(bar['SeatsCount']))
+def get_biggest_bar(kwargs):
+    return max(kwargs['bars'], key=lambda bar: int(bar['SeatsCount']))
 
 
-def get_smallest_bar(bars):
-    return min(bars, key=lambda bar: int(bar['SeatsCount']))
+def get_smallest_bar(kwargs):
+    return min(kwargs['bars'], key=lambda bar: int(bar['SeatsCount']))
 
 
-def get_closest_bar(bars, longitude, latitude):
-    return min(bars, key=lambda bar: distance_to(bar, longitude, latitude))
+def get_closest_bar(kwargs):
+    longitude, latitude = kwargs['longitude'], kwargs['latitude']
+    distance = lambda bar: distance_to(bar, longitude, latitude)
+    return min(kwargs['bars'], key=distance)
 
 
-def print_usage(name):
+def print_usage_and_exit(kwargs):
+    name = kwargs['script_name']
     print('usage: ' + name + ' mode file_name', file=sys.stderr)
     print('     mode принимает следующие значения:', file=sys.stderr)
     print('     - biggest (показать самый большой бар)', file=sys.stderr)
     print('     - smallest (показать самый маленький бар)', file=sys.stderr)
     print('     - closest (показать ближайший бар)', file=sys.stderr)
-    print('     file_name - это имя JSON файла', file=sys.stderr)
-    print('                 с данными о барах', file=sys.stderr)
+    print('     file_name - это имя JSON файла ' + \
+          'с данными о барах', file=sys.stderr)
+    sys.exit(1)
 
 
 def print_bar(bar):
@@ -45,36 +46,22 @@ def print_bar(bar):
     print('Телефон: ' + bar['PublicPhone'][0]['PublicPhone'])
 
 
-def print_biggest_bar(data_file):
-    biggest_bar = get_biggest_bar(load_data(data_file))
-    print_bar(biggest_bar)
-
-
-def print_smallest_bar(data_file):
-    smallest_bar = get_smallest_bar(load_data(data_file))
-    print_bar(smallest_bar)
-
-
-def print_closest_bar(data_file):
-    bars = load_data(data_file)
-    message = 'Введите долготу и ширину: '
-    longitude, latitude = [float(s) for s in input(message).split()]
-    bar = get_closest_bar(bars, longitude, latitude)
-    print_bar(bar)
-
-
-options = {'biggest': print_biggest_bar, 'smallest': print_smallest_bar,
-           'closest': print_closest_bar}
-
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print('Неверно количество введенных аргументов.', file=sys.stderr)
-        print_usage(sys.argv[0])
-    else:
-        for opt in options:
-            if opt == sys.argv[1]:
-                options[opt](sys.argv[2])
-                break;
-        else:
-            print('Неизвестный аргумент.', file=sys.stderr)
-            print_usage(sys.argv[0])
+        print_usage_and_exit(sys.argv[0])
+    try:
+        bars = load_data(sys.argv[2])
+    except FileNotFoundError:
+        raise SystemExit('Файл не найден.')
+
+    options = {'biggest': get_biggest_bar, 'smallest': get_smallest_bar,
+               'closest': get_closest_bar}
+    kwargs = {'bars': bars, 'script_name': sys.argv[2]}
+    if sys.argv[1] == 'closest':
+        message = 'Введите долготу и ширину: '
+        longitude, latitude = [float(s) for s in input(message).split()]
+        kwargs['longitude'], kwargs['latitude'] = longitude, latitude 
+
+    bar = options.get(sys.argv[1], print_usage_and_exit)(kwargs)
+    print_bar(bar)
