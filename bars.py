@@ -3,30 +3,16 @@ import json
 from math import sqrt
 
 
-class Bar:
-
-    def __init__(self, json_data):
-        self.seat_count = json_data['SeatsCount']
-        self.longitude = float(json_data['geoData']['coordinates'][0])
-        self.latitude = float(json_data['geoData']['coordinates'][1])
-        self.name = json_data['Name']
-        self.address = json_data['District'] + ', ' + json_data['Address']
-        self.telephone = json_data['PublicPhone'][0]['PublicPhone']
-
-    def distance_to(self, longitude, latitude):
-        x2 = (longitude - self.longitude) ** 2
-        y2 = (latitude - self.latitude) ** 2
-        return sqrt(x2 + y2)
+def distance_to(bar, longitude, latitude):
+    x2 = (longitude - bar['geoData']['coordinates'][0]) ** 2
+    y2 = (latitude - bar['geoData']['coordinates'][1]) ** 2
+    return sqrt(x2 + y2)
 
 
 def load_data(filepath):
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
-            raw_bars = json.load(f);
-            bars = []
-            for raw_bar in raw_bars:
-                bars.append(Bar(raw_bar))
-            return bars
+            return json.load(f)
     except FileNotFoundError:
         raise SystemExit('Файл не найден.')
 
@@ -34,7 +20,7 @@ def load_data(filepath):
 def get_biggest_bar(bars):
     biggest_bar = bars[0]
     for bar in bars:
-        if bar.seat_count > biggest_bar.seat_count:
+        if bar['SeatsCount'] > biggest_bar['SeatsCount']:
             biggest_bar = bar
     return biggest_bar
 
@@ -42,16 +28,16 @@ def get_biggest_bar(bars):
 def get_smallest_bar(bars):
     smallest_bar = bars[0]
     for bar in bars:
-        if bar.seat_count < smallest_bar.seat_count:
+        if bar['SeatsCount'] < smallest_bar['SeatsCount']:
             smallest_bar = bar
     return smallest_bar
 
 
 def get_closest_bar(bars, longitude, latitude):
     closest_bar = bars[0]
-    closest_distance = closest_bar.distance_to(longitude, latitude)
+    closest_distance = distance_to(closest_bar, longitude, latitude)
     for bar in bars:
-        current_distance = bar.distance_to(longitude, latitude) 
+        current_distance = distance_to(bar, longitude, latitude) 
         if current_distance < closest_distance:
             closest_bar = bar
             closest_distance = current_distance
@@ -69,9 +55,9 @@ def print_usage(name):
 
 
 def print_bar(bar):
-    print('Название: ' + bar.name)
-    print('Адрес: ' + bar.address)
-    print('Телефон: ' + bar.telephone)
+    print('Название: ' + bar['Name'])
+    print('Адрес: ' + bar['District'] + ', ' + bar['Address'])
+    print('Телефон: ' + bar['PublicPhone'][0]['PublicPhone'])
 
 
 def print_biggest_bar(data_file):
