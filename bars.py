@@ -29,8 +29,8 @@ def get_closest_bar(kwargs):
 
 
 def print_usage_and_exit(kwargs):
-    name = kwargs['script_name']
-    print('usage: ' + name + ' mode file_name', file=sys.stderr)
+    script_name = kwargs['script_name']
+    print('usage: ' + script_name + ' mode file_name', file=sys.stderr)
     print('     mode принимает следующие значения:', file=sys.stderr)
     print('     - biggest (показать самый большой бар)', file=sys.stderr)
     print('     - smallest (показать самый маленький бар)', file=sys.stderr)
@@ -58,6 +58,7 @@ if __name__ == '__main__':
     options = {'biggest': get_biggest_bar, 'smallest': get_smallest_bar,
                'closest': get_closest_bar}
     kwargs = {'bars': bars, 'script_name': sys.argv[2]}
+
     if sys.argv[1] == 'closest':
         message = 'Введите долготу и ширину: '
         longitude, latitude = [float(s) for s in input(message).split()]
