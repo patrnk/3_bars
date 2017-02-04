@@ -18,30 +18,15 @@ def load_data(filepath):
 
 
 def get_biggest_bar(bars):
-    biggest_bar = bars[0]
-    for bar in bars:
-        if bar['SeatsCount'] > biggest_bar['SeatsCount']:
-            biggest_bar = bar
-    return biggest_bar
+    return max(bars, key=lambda bar: int(bar['SeatsCount']))
 
 
 def get_smallest_bar(bars):
-    smallest_bar = bars[0]
-    for bar in bars:
-        if bar['SeatsCount'] < smallest_bar['SeatsCount']:
-            smallest_bar = bar
-    return smallest_bar
+    return min(bars, key=lambda bar: int(bar['SeatsCount']))
 
 
 def get_closest_bar(bars, longitude, latitude):
-    closest_bar = bars[0]
-    closest_distance = distance_to(closest_bar, longitude, latitude)
-    for bar in bars:
-        current_distance = distance_to(bar, longitude, latitude) 
-        if current_distance < closest_distance:
-            closest_bar = bar
-            closest_distance = current_distance
-    return closest_bar
+    return min(bars, key=lambda bar: distance_to(bar, longitude, latitude))
 
 
 def print_usage(name):
