@@ -1,6 +1,7 @@
-import sys
-import json
+from json import load
 from math import sqrt
+from argparse import ArgumentParser
+from sys import exit
 
 
 def distance_to(bar, longitude, latitude):
@@ -11,7 +12,7 @@ def distance_to(bar, longitude, latitude):
 
 def load_data(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
-        return json.load(f)
+        return load(f)
 
 
 def get_biggest_bar(kwargs):
@@ -28,41 +29,38 @@ def get_closest_bar(kwargs):
     return min(kwargs['bars'], key=distance)
 
 
-def print_usage_and_exit(kwargs):
-    script_name = kwargs['script_name']
-    print('usage: ' + script_name + ' mode file_name', file=sys.stderr)
-    print('     mode принимает следующие значения:', file=sys.stderr)
-    print('     - biggest (показать самый большой бар)', file=sys.stderr)
-    print('     - smallest (показать самый маленький бар)', file=sys.stderr)
-    print('     - closest (показать ближайший бар)', file=sys.stderr)
-    print('     file_name - это имя JSON файла ' + \
-          'с данными о барах', file=sys.stderr)
-    sys.exit(1)
-
-
 def print_bar(bar):
     print('Название: ' + bar['Name'])
     print('Адрес: ' + bar['District'] + ', ' + bar['Address'])
     print('Телефон: ' + bar['PublicPhone'][0]['PublicPhone'])
 
 
+def get_cli_args():
+    parser = ArgumentParser()
+    parser.add_argument('what_to_look_for', type=str, 
+            help='говорит скрипту, что нужно найти: ' +\
+                 'biggest, smallest или closest')
+    parser.add_argument('json_file', help='файл с данными о барах')
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print('Неверно количество введенных аргументов.', file=sys.stderr)
-        print_usage_and_exit(sys.argv[0])
+    args = get_cli_args()
     try:
-        bars = load_data(sys.argv[2])
+        bars = load_data(args.json_file)
     except FileNotFoundError:
         raise SystemExit('Файл не найден.')
 
     options = {'biggest': get_biggest_bar, 'smallest': get_smallest_bar,
                'closest': get_closest_bar}
-    kwargs = {'bars': bars, 'script_name': sys.argv[2]}
+    kwargs = {'bars': bars}
 
-    if sys.argv[1] == 'closest':
+    if args.what_to_look_for == 'closest':
         message = 'Введите долготу и ширину: '
         longitude, latitude = [float(s) for s in input(message).split()]
         kwargs['longitude'], kwargs['latitude'] = longitude, latitude 
 
-    bar = options.get(sys.argv[1], print_usage_and_exit)(kwargs)
+    bar = options.get(args.what_to_look_for, None)(kwargs)
+    if bar == None:
+        exit('Uknown argument %s' % what_to_look_for)
     print_bar(bar)
