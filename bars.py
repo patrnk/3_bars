@@ -1,6 +1,7 @@
 from json import load
 from math import sqrt
 from argparse import ArgumentParser
+from os.path import exists
 from sys import exit
 
 
@@ -40,16 +41,16 @@ def get_cli_args():
     parser.add_argument('what_to_look_for', type=str, 
             help='говорит скрипту, что нужно найти: ' +\
                  'biggest, smallest или closest')
-    parser.add_argument('json_file', help='файл с данными о барах')
+    parser.add_argument('json_filepath', help='файл с данными о барах')
     return parser.parse_args()
 
 
 if __name__ == '__main__':
     args = get_cli_args()
-    try:
-        bars = load_data(args.json_file)
-    except FileNotFoundError:
-        raise SystemExit('Файл не найден.')
+
+    if not exists(args.json_filepath):
+        exit('Файл с барами не найден.')
+    bars = load_data(args.json_filepath)
 
     options = {'biggest': get_biggest_bar, 'smallest': get_smallest_bar,
                'closest': get_closest_bar}
@@ -62,5 +63,5 @@ if __name__ == '__main__':
 
     bar = options.get(args.what_to_look_for, None)(kwargs)
     if bar == None:
-        exit('Uknown argument %s' % what_to_look_for)
+        exit('Неизвестный аргумент %s' % what_to_look_for)
     print_bar(bar)
