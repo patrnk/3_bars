@@ -65,5 +65,5 @@ if __name__ == '__main__':
 
     bar = options.get(args.what_to_look_for)(**kwargs)
     if not bar:
-        exit('Неизвестный аргумент {0}'.format(what_to_look_for))
+        exit('Неизвестный аргумент {0}'.format(args.what_to_look_for))
     print_bar(bar)
