@@ -45,25 +45,26 @@ def get_argument_parser():
 
 
 if __name__ == '__main__':
-    args = get_argument_parser().parse_args()
-
-    if not exists(args.json_filepath):
-        exit('Файл с барами не найден.')
-    bars = load_data(args.json_filepath)
-
     options = {
         'biggest': get_biggest_bar,
         'smallest': get_smallest_bar,
         'closest': get_closest_bar
     }
-    kwargs = {'bars': bars}
+    args = get_argument_parser().parse_args()
 
+    option = options.get(args.what_to_look_for)
+    if not option:
+        exit('Неизвестный аргумент {0}'.format(args.what_to_look_for))
+    if not exists(args.json_filepath):
+        exit('Файл с барами не найден.')
+
+    bars = load_data(args.json_filepath)
+
+    kwargs = {'bars': bars}
     if args.what_to_look_for == 'closest':
         message = 'Введите долготу и ширину: '
         longitude, latitude = [float(s) for s in input(message).split()]
         kwargs['longitude'], kwargs['latitude'] = longitude, latitude 
 
-    bar = options.get(args.what_to_look_for)(**kwargs)
-    if not bar:
-        exit('Неизвестный аргумент {0}'.format(args.what_to_look_for))
+    bar = option(**kwargs)
     print_bar(bar)
