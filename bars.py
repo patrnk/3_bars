@@ -11,23 +11,22 @@ def distance_to(bar, longitude, latitude):
     return sqrt(x2 + y2)
 
 
+def get_closest_bar(bars, longitude, latitude):
+    distance = lambda bar: distance_to(bar, longitude, latitude)
+    return min(bars, key=distance)
+
+
+def get_biggest_bar(bars):
+    return max(bars, key=lambda bar: int(bar['SeatsCount']))
+
+
+def get_smallest_bar(bars):
+    return min(bars, key=lambda bar: int(bar['SeatsCount']))
+
+
 def load_data(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         return load(f)
-
-
-def get_biggest_bar(kwargs):
-    return max(kwargs['bars'], key=lambda bar: int(bar['SeatsCount']))
-
-
-def get_smallest_bar(kwargs):
-    return min(kwargs['bars'], key=lambda bar: int(bar['SeatsCount']))
-
-
-def get_closest_bar(kwargs):
-    longitude, latitude = kwargs['longitude'], kwargs['latitude']
-    distance = lambda bar: distance_to(bar, longitude, latitude)
-    return min(kwargs['bars'], key=distance)
 
 
 def print_bar(bar):
@@ -52,8 +51,11 @@ if __name__ == '__main__':
         exit('Файл с барами не найден.')
     bars = load_data(args.json_filepath)
 
-    options = {'biggest': get_biggest_bar, 'smallest': get_smallest_bar,
-               'closest': get_closest_bar}
+    options = {
+        'biggest': get_biggest_bar,
+        'smallest': get_smallest_bar,
+        'closest': get_closest_bar
+    }
     kwargs = {'bars': bars}
 
     if args.what_to_look_for == 'closest':
@@ -61,7 +63,7 @@ if __name__ == '__main__':
         longitude, latitude = [float(s) for s in input(message).split()]
         kwargs['longitude'], kwargs['latitude'] = longitude, latitude 
 
-    bar = options.get(args.what_to_look_for, None)(kwargs)
-    if bar == None:
-        exit('Неизвестный аргумент %s' % what_to_look_for)
+    bar = options.get(args.what_to_look_for)(**kwargs)
+    if not bar:
+        exit('Неизвестный аргумент {0}'.format(what_to_look_for))
     print_bar(bar)
