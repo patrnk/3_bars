@@ -25,7 +25,7 @@ def get_smallest_bar(bars):
 
 
 def load_data(filepath):
-    with open(filepath, 'r', encoding='utf-8') as f:
+    with open(filepath, 'r', encoding='cp1251') as f:
         return load(f)
 
 
