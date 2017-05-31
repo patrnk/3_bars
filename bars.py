@@ -30,15 +30,15 @@ def load_data(filepath):
 
 
 def print_bar(bar):
-    print('Название: ' + bar['Name'])
-    print('Адрес: ' + bar['District'] + ', ' + bar['Address'])
-    print('Телефон: ' + bar['PublicPhone'][0]['PublicPhone'])
+    print('Название: {0}'.format(bar['Name']))
+    print('Адрес: {0}, {1}'.format(bar['District'], bar['Address']))
+    print('Телефон: {0}'.format(bar['PublicPhone'][0]['PublicPhone']))
 
 
 def get_argument_parser():
     parser = ArgumentParser()
     parser.add_argument('what_to_look_for', type=str, 
-            help='говорит скрипту, что нужно найти: ' +\
+            help='говорит скрипту, что нужно найти: '\
                  'biggest, smallest или closest')
     parser.add_argument('json_filepath', help='файл с данными о барах')
     return parser
